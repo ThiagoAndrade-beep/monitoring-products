@@ -1,0 +1,220 @@
+:root {
+    --color-bg: #0c0c0c;
+    --color-card: #161616;
+    --color-input: #0a0a0a;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b5b5b5;
+    --color-accent: #ff6600;
+    --color-accent-light: #ff8800;
+    --color-border: rgba(255, 255, 255, 0.05);
+  }
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+}
+
+.container-apresentation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 80vh;
+    gap: 2rem;
+}
+
+#caixa {
+    background-color: var(--color-accent);
+    padding: 15px;
+    border-radius: 12px;
+    height: 75px;
+    width: 75px;
+}
+
+.container-apresentation h1 {
+    font-size: 60px;
+    width: 70%;
+    text-align: center;
+    color: var(--color-accent);
+}
+
+.container-apresentation p {
+    color: var(--color-text-secondary);
+    font-size: 20px;
+    width: 70%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.apresentation-buttons {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.btn-createAccount {
+    background-color: var(--color-accent);
+    border: none;
+    padding: 1.5rem;
+    border-radius: 8px;
+    font-size: 22px;
+    display: flex;
+    text-align: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-createAccount a{
+    text-decoration: none;
+    color: var(--color-input);
+}
+
+.btn-loginAccount {
+    padding: 1.5rem;
+    border: 1px solid var(--color-accent-light);
+    background-color: transparent;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-loginAccount a {
+    text-decoration: none;
+    color: var(--color-text-primary);
+}
+
+.container-benefits {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 10rem;
+    margin-bottom: 4rem;
+}
+
+.benefits-texts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.benefits-texts h1 {
+    font-size: 40px;
+    color: var(--color-text-primary);
+    font-weight: bold;
+}
+
+.marked-phrase {
+    color: var(--color-accent);
+}
+
+.benefits-texts p {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.benefits-cards {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    max-width: 1100px;
+    gap: 2.5rem;
+}
+
+.card {
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+    gap: 1rem;
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
+  }
+
+.card img {
+    background-color: var(--color-accent);
+    padding: 10px;
+    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 0.8rem;
+}
+
+.card h3 {
+    color: var(--color-text-primary);
+}
+
+.card p {
+    color: var(--color-text-secondary);
+    line-height: 1.4rem;
+}
+
+.container-closure {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4rem 2.5rem;
+    max-width: 1100px;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+.closure {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.closure h1 {
+    font-size: 42px;
+    color: var(--color-text-primary);
+}
+
+.closure p {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+.closure button {
+    background-color: var(--color-accent);
+    border: none;
+    padding: 1.2rem;
+    border-radius: 8px;
+    font-size: 18px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.closure button a {
+    text-decoration: none;
+    color: var(--color-input);
+}
