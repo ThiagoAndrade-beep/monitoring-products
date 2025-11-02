@@ -1,0 +1,87 @@
+:root {
+    --color-bg: #0c0c0c;
+    --color-card: #161616;
+    --color-input: #0a0a0a;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b5b5b5;
+    --color-accent: #ff6600;
+    --color-accent-light: #ff8800;
+    --color-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .containerRegister {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 2rem;
+  }
+
+  .register-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .register-texts h1 {
+    color: var(--color-accent);
+    font-size: 45px;
+  }
+
+  .register-texts p {
+    color: var(--color-text-secondary);
+  }
+
+  .register-form {
+    padding: 2rem 3.5rem;
+    max-width: 500px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--color-card);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .register {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .register span {
+    color: var(--color-text-primary);
+  }
+
+  .register input {
+    background-color: var(--color-input);
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .input-register {
+    padding: 0.8rem;
+    background-color: var(--color-accent);
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .link-login {
+    text-decoration: none;
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  .span-login {
+    color: var(--color-accent-light);
+  }
