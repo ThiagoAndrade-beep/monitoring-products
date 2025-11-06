@@ -64,6 +64,7 @@
     border: none;
     padding: 0.8rem;
     border-radius: 8px;
+    color: var(--color-text-primary);
   }
 
   .input-register {
@@ -85,3 +86,31 @@
   .span-login {
     color: var(--color-accent-light);
   }
+
+  .password-warning {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: -10px;
+    text-align: center;
+  }
+
+  .password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  width: 100%;
+}
+
+.password-input-container .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
