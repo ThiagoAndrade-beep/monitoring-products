@@ -11,6 +11,7 @@ app.use(cors()) //libera tudo para testes
 app.use(express.json()) //"pega todas as requisições e tudo que tem no body converte para um json"
 
 const User = require("./models/Register.js")
+const takingData = require('./index.js')
 
 app.listen(3000, () => {
     console.log("servidor rodando na porta 3000")
@@ -42,7 +43,7 @@ const checkToken = (req, res, next) => {
     }
 }
 
-app.get("/user/:id", checkToken, async (req, res) => {
+app.get("/auth/user/:id", checkToken, async (req, res) => {
     const id = req.params.id
     const userData = await User.findById(id, "-password")
 
@@ -140,28 +141,42 @@ app.post("/auth/login", async (req, res) => {
             secret,
         )
 
-        res.status(200).json({ msg: "Usuário logado com sucesso!", token })
+        res.status(200).json({ msg: "Usuário logado com sucesso!", token, userId: userEmail._id })
         console.log("Token enviado para o front end:", token)
     } catch (error) {
         console.log("Algo de errado aconteceu ao tentar fazer o login:", error)
     }
 })
 
-// app.post("/adicionar-url", async(req, res) => {
-//     const {novaUrl} = req.body // ou seja, isso aqui vai ser um json
-//     if(!novaUrl) {
-//         return res.status(400).json({erro: "URL ausente"})
-//     }
+app.post("/auth/add-url", checkToken, async(req, res) => {
+    const {novaUrl} = req.body
+    const userId = req.user
 
-//     const config = JSON.parse(fs.readFileSync("./config.json"))
-//     config.url.push(novaUrl)
-//     fs.writeFileSync("./config.json", JSON.stringify(config, null, 2))
+    if(!novaUrl) {
+        return res.status(422).json({msg: "Insira uma URL!"})
+    }   
 
-//     const dados = await buscarDados(novaUrl)
-//     fs.writeFileSync("./productData.json", JSON.stringify(dados, null, 2))
+    try {
+        const user = await User.findById(userId)
+        if(!user) {
+            return res.status(404).json({msg: "Usuário não encontrado!"})
+        }
 
-//     res.json({mensagem: "URL adicionada com sucesso!", dados})
-// })
+        const [productData] = await takingData(novaUrl)
+
+        user.products.push({
+            link: productData.url,
+            name: productData.name,
+            price: productData.price
+        })
+        await user.save()
+
+        res.status(200).json({msg: "Produto adicionado com sucesso!", product: productData})
+    } catch (error) {
+        console.log("Erro ao adicionar produto:", error)
+        res.status(500).json({msg: "Erro no servidor, tente novamente mais tarde!"})
+    }
+})
 
 // app.get("/produto-adicionado", async(req, res) => {
 //     try {

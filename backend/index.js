@@ -14,7 +14,7 @@ async function takingData(url) {
     await newPage.waitForSelector(priceSelector)
     const price = await newPage.$eval(priceSelector, (el) => el.innerHTML.trim())
 
-    // fs.writeFileSync("productData.json", JSON.stringify(productData, null, 2))
+    
     await browser.close()
 
     return [
