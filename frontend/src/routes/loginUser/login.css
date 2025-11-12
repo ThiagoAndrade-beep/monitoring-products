@@ -70,6 +70,7 @@
     border: none;
     padding: 0.8rem;
     border-radius: 8px;
+    color: var(--color-text-primary);
   }
 
   .input-login {

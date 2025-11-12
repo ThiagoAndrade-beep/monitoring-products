@@ -6,6 +6,7 @@ import App from './App.jsx'
 import HomePage from './pages/home/HomePage.jsx'
 import Login from './routes/loginUser/Login.jsx'
 import Register from './routes/registerUser/Register.jsx'
+import Dashboard from './pages/dashboard/Dashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "LoginUser",
     element: <Login />
+  },
+  {
+    path: "Dashboard/:id",
+    element: <Dashboard />
   }
 ])
 
