@@ -154,7 +154,20 @@ app.post("/auth/add-url", checkToken, async(req, res) => {
 
     if(!novaUrl) {
         return res.status(422).json({msg: "Insira uma URL!"})
-    }   
+    }
+
+    function urlValid(url) {
+        try {
+            new URL(url)
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    if(!urlValid(novaUrl)) {
+        return res.status(422).json({msg: "Insira uma URL válida!"})
+    }
 
     try {
         const user = await User.findById(userId)
@@ -178,15 +191,21 @@ app.post("/auth/add-url", checkToken, async(req, res) => {
     }
 })
 
-// app.get("/produto-adicionado", async(req, res) => {
-//     try {
-//         const config = JSON.parse(fs.readFileSync("./productData.json"))
-//         console.log(config)
-//         res.json(config)
-//     } catch(error) {
-//         res.json({error: error})
-//     }
-// })
+app.get("/auth/view-products", checkToken, async(req, res) => {
+    const userId = req.user
+
+    try {
+        const user = await User.findById(userId)
+        if(!user) {
+            return res.status(404).json({msg: "Usuário não encontrado!"})
+        }
+
+        res.status(200).json({products: user.products})
+    } catch (error) {
+        console.log("Erro ao buscar produtos:", error)
+        res.status(500).json({msg: "Erro no servidor, tente novamente mais tarde!"})
+    }
+})
 
 const conn = require("./db/Connect.js")
 conn()
