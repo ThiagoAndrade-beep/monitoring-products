@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import './dashboard.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import fetchApi from '../../axios/config'
 import caixa from "../../assets/caixa.png"
 import sair from "../../assets/sair.png"
 import caixaLaranja from "../../assets/caixa-laranja.png"
-import caixaCinza from "../../assets/caixa-cinza.png"      
+import caixaCinza from "../../assets/caixa-cinza.png"     
+import { ToastContainer, toast } from 'react-toastify';
 import './dashboard.css'
 
 const Dashboard = () => {
     const navigate = useNavigate()
     const { id } = useParams()
     const [data, setData] = useState(null)
+    const [novaUrl, setNovaUrl] = useState("")
 
     useEffect(() => {
         const reqGet = async () => {
@@ -42,6 +43,25 @@ const Dashboard = () => {
     function handleLogout() {
         localStorage.removeItem("token")
         navigate("/LoginUser")
+    }
+
+    async function handleSubmitUrl(e) {
+        e.preventDefault()
+        const token = localStorage.getItem("token")
+
+        try {
+            const response = await fetchApi.post("/add-url", {novaUrl}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            console.log("url adicionada:", response.data)
+            toast.success(response.data.msg)
+        } catch (error) {
+            console.log("erro ao enviar url:", error)
+            toast.error(error.response.data.msg)
+        }
     }
 
     if (!data) {
@@ -87,10 +107,10 @@ const Dashboard = () => {
                         <p>Cole a URL do produto da Amazon</p>
                     </div>
 
-                    <form>
+                    <form onSubmit={handleSubmitUrl}>
                         <label className='url-action'>
                             <span>Link do produto Amazon</span>
-                            <input type="text" placeholder='https://amazon.com.br/produto...' />
+                            <input type="text" placeholder='https://amazon.com.br/produto...' name='novaUrl' value={novaUrl} onChange={(e) => setNovaUrl(e.target.value)}/>
                         </label>
                         <input type="submit" value="Adicionar produto" id='add-url'/>
                     </form>
@@ -110,6 +130,7 @@ const Dashboard = () => {
                     </div>
                 </div> 
             </section>
+            <ToastContainer />
         </main>
     )
 }
