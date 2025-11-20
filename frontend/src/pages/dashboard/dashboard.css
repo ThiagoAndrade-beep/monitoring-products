@@ -7,6 +7,7 @@
     --color-accent: #ff6600;
     --color-accent-light: #ff8800;
     --color-border: rgba(255, 255, 255, 0.05);
+    --color-money: #2E7D32
   }
 
 
@@ -213,7 +214,7 @@
     height: 20px;
 }
 
-.product {
+.no-products {
     margin-top: 1.5rem;
     background-color: var(--color-card);
     padding: 90px;
@@ -222,7 +223,7 @@
     color: var(--color-text-secondary);
 }
 
-.product-infos {
+.no-product {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -230,16 +231,108 @@
     gap: 1rem;
 }
 
-.product span {
-    font-size: 18px;
-}
-
-.product p {
-    font-size: 14px;
-}
-
-.product-infos img {
+.no-product img {
     width: 50px;
     height: 50px;
     margin-bottom: 0.4rem;
+}
+
+.products-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.product {
+    width: calc(30% - 1rem);
+    padding: 20px;
+    background-color: var(--color-card);
+    border-radius: 10px;
+}
+
+.products {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.products-icons {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+}
+
+.icon-box-orange {
+    background-color: rgba(255, 138, 48, 0.15);
+    padding: 0.8rem;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.icon-trash-can {
+    background: rgba(255, 59, 48, 0.25);
+    padding: 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    transition: 0.5s;
+}
+
+.icon-trash-can:hover {
+   background: rgba(255, 59, 48, 0.15);
+}
+
+.product-name {
+    color: var(--color-text-primary);
+    font-size: 18px;
+    font-weight: bold;
+}   
+
+.product-price {
+    color: var(--color-accent-light);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.products-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.products-date p {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+}
+
+.product-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-bg);
+    padding: 0.7rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.product-link img {
+    width: 15px;
+    height: 15px;
+}
+
+.product-link a {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--color-text-secondary);
+}
+
+.product-link:hover {
+    background-color: var(--color-accent);
+    opacity: 1;
 }

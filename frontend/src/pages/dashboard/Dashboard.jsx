@@ -4,7 +4,10 @@ import fetchApi from '../../axios/config'
 import caixa from "../../assets/caixa.png"
 import sair from "../../assets/sair.png"
 import caixaLaranja from "../../assets/caixa-laranja.png"
-import caixaCinza from "../../assets/caixa-cinza.png"     
+import caixaCinza from "../../assets/caixa-cinza.png"
+import calendario from "../../assets/calendario.png"
+import link from "../../assets/link-externo.png"
+import lixo from "../../assets/lata-de-lixo.png"
 import { ToastContainer, toast } from 'react-toastify';
 import './dashboard.css'
 
@@ -13,7 +16,9 @@ const Dashboard = () => {
     const { id } = useParams()
     const [data, setData] = useState(null)
     const [novaUrl, setNovaUrl] = useState("")
+    const [dataProducts, setDataProducts] = useState(null)
 
+    //validação após o login
     useEffect(() => {
         const reqGet = async () => {
             const token = localStorage.getItem("token")
@@ -40,17 +45,19 @@ const Dashboard = () => {
         reqGet()
     }, [id, navigate])
 
+    //função de logout
     function handleLogout() {
         localStorage.removeItem("token")
         navigate("/LoginUser")
     }
 
+    //enviando url para o servidor
     async function handleSubmitUrl(e) {
         e.preventDefault()
         const token = localStorage.getItem("token")
 
         try {
-            const response = await fetchApi.post("/add-url", {novaUrl}, {
+            const response = await fetchApi.post("/add-url", { novaUrl }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -63,6 +70,25 @@ const Dashboard = () => {
             toast.error(error.response.data.msg)
         }
     }
+
+    //buscando pelos dados dos produtos
+    useEffect(() => {
+        const reqGetProducts = async () => {
+            const token = localStorage.getItem("token")
+
+            try {
+                const response = await fetchApi.get("/view-products", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                setDataProducts(response.data.products)
+            } catch (error) {
+                console.log("Erro ao buscar pelos produtos:", error)
+            }
+        }
+        reqGetProducts()
+    }, [novaUrl])
 
     if (!data) {
         return <p>Carregando...</p>
@@ -79,7 +105,7 @@ const Dashboard = () => {
                 </div>
                 <div className='logout-section'>
                     <button onClick={handleLogout}>
-                        <img src={sair} alt='sair' id='sair'/>
+                        <img src={sair} alt='sair' id='sair' />
                         Sair
                     </button>
                 </div>
@@ -100,7 +126,7 @@ const Dashboard = () => {
                         <span>{data.email}</span>
                     </div>
                 </div>
-                
+
                 <div className='info-url'>
                     <div className='info-url-texts'>
                         <h2>+ Adicionar Produto</h2>
@@ -110,25 +136,51 @@ const Dashboard = () => {
                     <form onSubmit={handleSubmitUrl}>
                         <label className='url-action'>
                             <span>Link do produto Amazon</span>
-                            <input type="text" placeholder='https://amazon.com.br/produto...' name='novaUrl' value={novaUrl} onChange={(e) => setNovaUrl(e.target.value)}/>
+                            <input type="text" placeholder='https://amazon.com.br/produto...' name='novaUrl' value={novaUrl} onChange={(e) => setNovaUrl(e.target.value)} />
                         </label>
-                        <input type="submit" value="Adicionar produto" id='add-url'/>
+                        <input type="submit" value="Adicionar produto" id='add-url' />
                     </form>
                 </div>
             </section>
 
             <section className='registered-products'>
                 <div className='registered-products-texts'>
-                     <img src={caixaLaranja} alt="caixa laranja" />   
-                    <h2>Produtos cadastrados(0)</h2> 
-                </div>  
-                <div className='product'>
-                    <div className='product-infos'>
-                        <img src={caixaCinza} alt="caixa cinza" />
-                        <span>Nenhum produto cadastrado ainda</span>
-                        <p>Adicione sua primeira URL para começar a monitorar</p>
+                    <img src={caixaLaranja} alt="caixa laranja" />
+                    <h2>Produtos cadastrados ({dataProducts?.length})</h2>
+                </div>
+                {!dataProducts || dataProducts?.length === 0 ? (
+                    <div className='no-products'>
+                        <div className='no-product'>
+                            <img src={caixaCinza} alt="caixa cinza" />
+                            <span>Nenhum produto cadastrado ainda</span>
+                            <p>Adicione sua primeira URL para começar a monitorar</p>
+                        </div>
                     </div>
-                </div> 
+                ) : (
+                    <div className="products-list"> {/*container*/}
+                        {dataProducts.map(item => (
+                            <div className='product' key={item._id}> {/*card do produto*/}
+                                <div className='products'> {/*organização interna*/}
+                                    <div className='products-icons'>
+                                        <img src={caixaLaranja} alt="caixa laranja" className='icon-box-orange'/>
+                                        <img src={lixo} alt="lixo" className='icon-trash-can'/>
+                                    </div>
+                                    <p className='product-name'>{item.name}</p>
+                                    <p className='product-price'>{item.price}</p>
+                                    <div className='products-date'>
+                                        <img src={calendario} alt="calendario" />
+                                        <p>Produto adicionado no dia: {new Date(item.createdAt).toLocaleString("pt-BR")}</p>
+                                    </div>
+                                    <hr />
+                                    <button className='product-link'>
+                                        <img src={link} alt="link" />
+                                        <a href={item.link}>Link do produto</a>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </section>
             <ToastContainer />
         </main>
