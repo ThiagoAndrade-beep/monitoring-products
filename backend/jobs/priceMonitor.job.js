@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const takingData = require('../index.js');
 const User = require('../models/Register.js');
+const {sendPriceDropEmail} = require("../services/email.services.js")
 
 function normalizePrice(price) {
     return Number(
@@ -14,7 +15,7 @@ function normalizePrice(price) {
 
 function startPriceMonitorJob() {
 
-    cron.schedule('*/1 * * * *', async () => {
+    cron.schedule('0 * * * *', async () => {
         console.log('⏱ Rodando monitoramento de preços...');
 
         const users = await User.find({
@@ -25,9 +26,22 @@ function startPriceMonitorJob() {
             for (const product of user.products) {
                 const [data] = await takingData(product.link)
                 const currentPrice = normalizePrice(data.price);
+                const previousPrice = product.lastPrice;
+                //const fakePrice = currentPrice - 100;
 
-                if (currentPrice !== product.lastPrice) {
-                    console.log(`🔔 Preço mudou: ${product.lastPrice} → ${currentPrice}`);
+                if (currentPrice !== previousPrice) {
+
+                    if(currentPrice < previousPrice) {
+                        await sendPriceDropEmail({
+                            to: user.email,
+                            productName: product.name,
+                            oldPrice: previousPrice,
+                            newPrice: currentPrice,
+                            link: product.link
+                        })
+                    }else {
+                        console.log("o preço aumentou")
+                    }
                     
                     product.history.push({
                         price: currentPrice,
