@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer")
 
 async function takingData(url) {
-    const browser = await puppeteer.launch({ headless: false })
+    const browser = await puppeteer.launch({ headless: false, ignoreHTTPSErrors: true })
     const newPage = await browser.newPage()
 
     await newPage.goto(url, { waitUntil: "load" })

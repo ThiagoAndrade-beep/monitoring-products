@@ -12,6 +12,7 @@ app.use(express.json()) //"pega todas as requisições e tudo que tem no body co
 
 const User = require("./models/Register.js")
 const takingData = require('./index.js')
+const cron = require('./jobs/priceMonitor.job.js');
 
 app.listen(3000, () => {
     console.log("servidor rodando na porta 3000")
@@ -22,7 +23,7 @@ const checkToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1]
 
     if (!token) {
-         return res.status(401).json({ msg: "Você não está autorizado!" })
+        return res.status(401).json({ msg: "Você não está autorizado!" })
     }
 
     try {
@@ -41,6 +42,16 @@ const checkToken = (req, res, next) => {
     } catch (error) {
         return res.status(400).json({ msg: "Token inválido!" })
     }
+}
+
+function normalizePrice(price) {
+    return Number(
+        price
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.')
+            .trim()
+    );
 }
 
 app.get("/auth/user/:id", checkToken, async (req, res) => {
@@ -81,12 +92,12 @@ app.post("/auth/register", async (req, res) => {
     //validação de senha forte
     const passwordRegex = /^(?=.*[@$!%*?&#])/;
     const result = passwordRegex.test(password)
-    if(password.length < 6) {
-        return res.status(422).json({msg: "A senha deve conter no mínimo 6 caracteres!"})
+    if (password.length < 6) {
+        return res.status(422).json({ msg: "A senha deve conter no mínimo 6 caracteres!" })
     }
 
-    if(!result) {
-        return res.status(422).json({msg: "A senha deve conter pelo menos um caractere especial!"})
+    if (!result) {
+        return res.status(422).json({ msg: "A senha deve conter pelo menos um caractere especial!" })
     }
 
     //verificar se o usuário já existe
@@ -148,12 +159,12 @@ app.post("/auth/login", async (req, res) => {
     }
 })
 
-app.post("/auth/add-url", checkToken, async(req, res) => {
-    const {novaUrl} = req.body
+app.post("/auth/add-url", checkToken, async (req, res) => {
+    const { novaUrl } = req.body
     const userId = req.user
 
-    if(!novaUrl) {
-        return res.status(422).json({msg: "Insira uma URL!"})
+    if (!novaUrl) {
+        return res.status(422).json({ msg: "Insira uma URL!" })
     }
 
     function urlValid(url) {
@@ -164,48 +175,56 @@ app.post("/auth/add-url", checkToken, async(req, res) => {
             return false
         }
     }
-    
-    if(!urlValid(novaUrl)) {
-        return res.status(422).json({msg: "Insira uma URL válida!"})
+
+    if (!urlValid(novaUrl)) {
+        return res.status(422).json({ msg: "Insira uma URL válida!" })
     }
 
     try {
         const user = await User.findById(userId)
-        if(!user) {
-            return res.status(404).json({msg: "Usuário não encontrado!"})
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" })
         }
 
         const [productData] = await takingData(novaUrl)
+        const normalizedPrice = normalizePrice(productData.price);
 
         user.products.push({
             link: productData.url,
             name: productData.name,
-            price: productData.price
-        })
+            lastPrice: normalizedPrice,
+            history: [
+                {
+                    price: normalizedPrice
+                }
+            ]
+        });
+
         await user.save()
 
-        res.status(200).json({msg: "Produto adicionado com sucesso!", product: productData})
+        res.status(200).json({ msg: "Produto adicionado com sucesso!", product: productData })
     } catch (error) {
         console.log("Erro ao adicionar produto:", error)
-        res.status(500).json({msg: "Erro no servidor, tente novamente mais tarde!"})
+        res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
     }
 })
 
-app.get("/auth/view-products", checkToken, async(req, res) => {
+app.get("/auth/view-products", checkToken, async (req, res) => {
     const userId = req.user
 
     try {
         const user = await User.findById(userId)
-        if(!user) {
-            return res.status(404).json({msg: "Usuário não encontrado!"})
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" })
         }
 
-        res.status(200).json({products: user.products})
+        res.status(200).json({ products: user.products })
     } catch (error) {
         console.log("Erro ao buscar produtos:", error)
-        res.status(500).json({msg: "Erro no servidor, tente novamente mais tarde!"})
+        res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
     }
 })
 
 const conn = require("./db/Connect.js")
 conn()
+cron()

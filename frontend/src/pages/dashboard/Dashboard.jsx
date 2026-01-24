@@ -161,10 +161,6 @@ const Dashboard = () => {
                         {dataProducts.map(item => (
                             <div className='product' key={item._id}> {/*card do produto*/}
                                 <div className='products'> {/*organização interna*/}
-                                    <div className='products-icons'>
-                                        <img src={caixaLaranja} alt="caixa laranja" className='icon-box-orange'/>
-                                        <img src={lixo} alt="lixo" className='icon-trash-can'/>
-                                    </div>
                                     <p className='product-name'>{item.name}</p>
                                     <p className='product-price'>{item.price}</p>
                                     <div className='products-date'>
