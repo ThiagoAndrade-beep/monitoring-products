@@ -40,7 +40,7 @@ function startPriceMonitorJob() {
                             link: product.link
                         })
                     }else {
-                        console.log("o preço aumentou")
+                        console.log("o preço subiu.")
                     }
                     
                     product.history.push({
@@ -50,6 +50,8 @@ function startPriceMonitorJob() {
 
                     product.lastPrice = currentPrice;
                     await user.save()
+                } else {
+                    console.log(`O preço do produto "${product.name}" não mudou.`);
                 }
             }
         }

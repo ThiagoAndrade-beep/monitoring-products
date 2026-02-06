@@ -114,3 +114,14 @@
   cursor: pointer;
   font-size: 18px;
 }
+
+@media (max-width: 480px) {
+  .register-texts h1 {
+    font-size: 30px;
+  }
+
+  .register-form {
+    padding: 1.8rem 1.5rem;
+  }
+}
+

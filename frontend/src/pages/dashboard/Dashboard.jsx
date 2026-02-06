@@ -5,11 +5,11 @@ import caixa from "../../assets/caixa.png"
 import sair from "../../assets/sair.png"
 import caixaLaranja from "../../assets/caixa-laranja.png"
 import caixaCinza from "../../assets/caixa-cinza.png"
-import calendario from "../../assets/calendario.png"
-import link from "../../assets/link-externo.png"
-import lixo from "../../assets/lata-de-lixo.png"
 import { ToastContainer, toast } from 'react-toastify';
 import './dashboard.css'
+import { FiCalendar } from "react-icons/fi";
+import { FiExternalLink } from "react-icons/fi";
+import { FiBox } from "react-icons/fi";
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -161,15 +161,15 @@ const Dashboard = () => {
                         {dataProducts.map(item => (
                             <div className='product' key={item._id}> {/*card do produto*/}
                                 <div className='products'> {/*organização interna*/}
+                                    <div className='icon-box'><FiBox size={24} color='#ff6600'/></div>
                                     <p className='product-name'>{item.name}</p>
-                                    <p className='product-price'>{item.price}</p>
+                                    <p className='product-price'>R$ {item.lastPrice}</p>
                                     <div className='products-date'>
-                                        <img src={calendario} alt="calendario" />
+                                        <FiCalendar size={18} color='#b5b5b5'/>
                                         <p>Produto adicionado no dia: {new Date(item.createdAt).toLocaleString("pt-BR")}</p>
                                     </div>
-                                    <hr />
                                     <button className='product-link'>
-                                        <img src={link} alt="link" />
+                                        <FiExternalLink size={18} color='#b5b5b5'/>
                                         <a href={item.link}>Link do produto</a>
                                     </button>
                                 </div>

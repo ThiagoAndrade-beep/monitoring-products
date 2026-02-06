@@ -92,3 +92,19 @@
   .span-register {
     color: var(--color-accent-light);
   }
+
+@media (max-width: 480px) {
+  .login-texts h1 {
+    font-size: 30px;
+  }
+
+  .login-form {
+    padding: 1.8rem 1.5rem;
+  }
+
+  #entrar {
+    width: 60px;
+    height: 60px;
+  }
+}
+
