@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const fetchApi = axios.create({
-    baseURL: "http://localhost:3000/auth/",
+    baseURL: "https://monitoring-products-production-api.up.railway.app/auth/",
     headers: {
         "Content-Type": "application/json"
     }
