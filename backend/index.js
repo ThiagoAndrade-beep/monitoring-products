@@ -1,7 +1,17 @@
 const puppeteer = require("puppeteer")
 
 async function takingData(url) {
-    const browser = await puppeteer.launch({ headless: false, ignoreHTTPSErrors: true })
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--no-zygote',
+            '--single-process'
+        ]
+    })
     const newPage = await browser.newPage()
 
     await newPage.goto(url, { waitUntil: "load" })
@@ -14,7 +24,7 @@ async function takingData(url) {
     await newPage.waitForSelector(priceSelector)
     const price = await newPage.$eval(priceSelector, (el) => el.innerHTML.trim())
 
-    
+
     await browser.close()
 
     return [
