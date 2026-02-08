@@ -12,8 +12,8 @@ const User = require("./models/Register.js")
 const takingData = require('./index.js')
 const cron = require('./jobs/priceMonitor.job.js');
 
-app.listen(3000, () => {
-    console.log("servidor rodando na porta 3000")
+app.listen(8080, () => {
+    console.log("servidor rodando na porta 8080")
 })
 
 const checkToken = (req, res, next) => {
@@ -69,7 +69,7 @@ app.get("/auth/user/:id", checkToken, async (req, res) => {
 })
 
 app.get("/", (req, res) => {
-    res.status(200).json({ msg: "bem vindo ao monitoring products" })
+    res.status(200).json({ msg: "bem vindo ao monitoring products de desenvolvimento" })
 })
 
 app.post("/auth/register", async (req, res) => {
