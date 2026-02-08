@@ -10,6 +10,9 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
+     connectionTimeout: 60000,
+     greetingTimeout: 60000,
+     socketTimeout: 300000
 });
 
 async function sendPriceDropEmail({ to, productName, oldPrice, newPrice, link }) {

@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const takingData = require('../index.js');
 const User = require('../models/Register.js');
-const {sendPriceDropEmail} = require("../services/email.services.js")
+const { sendPriceDropEmail } = require("../services/email.services.js")
 
 function normalizePrice(price) {
     return Number(
@@ -31,18 +31,22 @@ function startPriceMonitorJob() {
 
                 if (currentPrice !== previousPrice) {
 
-                    if(currentPrice < previousPrice) {
-                        await sendPriceDropEmail({
-                            to: user.email,
-                            productName: product.name,
-                            oldPrice: previousPrice,
-                            newPrice: currentPrice,
-                            link: product.link
-                        })
-                    }else {
+                    if (currentPrice < previousPrice) {
+                        try {
+                            await sendPriceDropEmail({
+                                to: user.email,
+                                productName: product.name,
+                                oldPrice: previousPrice,
+                                newPrice: currentPrice,
+                                link: product.link
+                            })
+                        } catch (error) {
+                            console.error("Erro ao enviar email:", error);
+                        }
+                    } else {
                         console.log("o preço subiu.")
                     }
-                    
+
                     product.history.push({
                         price: currentPrice,
                         date: new Date()
