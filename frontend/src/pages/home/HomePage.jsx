@@ -18,11 +18,11 @@ const HomePage = () => {
 
             <div className='apresentation-buttons'>
                 <button className='btn-createAccount'>
-                    <Link to="/Auth">Começar Gratuitamente</Link>
+                    <Link to="/RegisterUser">Começar Gratuitamente</Link>
                     <img src={setaDireita} alt="seta pra direita" />
                 </button>
                 <button className='btn-loginAccount'>
-                    <Link to="/Login">Já tenho conta</Link>
+                    <Link to="/LoginUser">Já tenho conta</Link>
                 </button>
             </div>
         </section>
@@ -64,7 +64,7 @@ const HomePage = () => {
             <h1>Pronto para economizar ?</h1>
             <p>Cadastre-se gratuitamente e comece a monitorar seus produtos favoritos agora mesmo</p>
             <button>
-                <Link to="/Auth">Criar conta grátis</Link>
+                <Link to="/RegisterUser">Criar conta grátis</Link>
                 <img src={setaDireita} alt="seta para direita" />
             </button>
           </div>

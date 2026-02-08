@@ -3,9 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import Auth from './routes/authentication/Auth.jsx'
 import HomePage from './pages/home/HomePage.jsx'
-import Login from './routes/login/Login.jsx'
+import Login from './routes/loginUser/Login.jsx'
+import Register from './routes/registerUser/Register.jsx'
+import Dashboard from './pages/dashboard/Dashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -13,12 +14,16 @@ const router = createBrowserRouter([
     element: <App />
   },
   {
-    path: "Auth",
-    element: <Auth />
+    path: "RegisterUser",
+    element: <Register />
   },
   {
-    path: "Login",
+    path: "LoginUser",
     element: <Login />
+  },
+  {
+    path: "Dashboard/:id",
+    element: <Dashboard />
   }
 ])
 
