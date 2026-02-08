@@ -10,6 +10,7 @@ import './dashboard.css'
 import { FiCalendar } from "react-icons/fi";
 import { FiExternalLink } from "react-icons/fi";
 import { FiBox } from "react-icons/fi";
+import { FiTrash } from "react-icons/fi";
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -90,6 +91,26 @@ const Dashboard = () => {
         reqGetProducts()
     }, [novaUrl])
 
+    async function deleteProduct(productId) {
+        const token = localStorage.getItem("token")
+
+        try {
+            const response = await fetchApi.delete(`delete-product/${productId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log("Produto deletado:", response.data)
+            toast.success(response.data.msg)
+
+            setDataProducts(prev =>
+                prev.filter(product => product._id !== productId)
+            )
+        } catch (error) {
+            toast.error(error.response.data.msg)
+        }
+    }
+
     if (!data) {
         return <p>Carregando...</p>
     }
@@ -161,15 +182,18 @@ const Dashboard = () => {
                         {dataProducts.map(item => (
                             <div className='product' key={item._id}> {/*card do produto*/}
                                 <div className='products'> {/*organização interna*/}
-                                    <div className='icon-box'><FiBox size={24} color='#ff6600'/></div>
+                                    <div className='products-icons'>
+                                        <div className='icon-box'><FiBox size={24} color='#ff6600' /></div>
+                                        <div className='icon-remove' onClick={() => deleteProduct(item._id)}><FiTrash size={22} color='#ff4d4d' /></div>
+                                    </div>
                                     <p className='product-name'>{item.name}</p>
                                     <p className='product-price'>R$ {item.lastPrice}</p>
                                     <div className='products-date'>
-                                        <FiCalendar size={18} color='#b5b5b5'/>
+                                        <FiCalendar size={18} color='#b5b5b5' />
                                         <p>Produto adicionado no dia: {new Date(item.createdAt).toLocaleString("pt-BR")}</p>
                                     </div>
                                     <button className='product-link'>
-                                        <FiExternalLink size={18} color='#b5b5b5'/>
+                                        <FiExternalLink size={18} color='#b5b5b5' />
                                         <a href={item.link}>Link do produto</a>
                                     </button>
                                 </div>

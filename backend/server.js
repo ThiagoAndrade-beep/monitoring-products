@@ -223,6 +223,30 @@ app.get("/auth/view-products", checkToken, async (req, res) => {
     }
 })
 
+app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
+    const userId = req.user
+    const productId = req.params.productId
+
+    try {
+        const user = await User.findById(userId) 
+
+        if(!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" })
+        }
+
+        const productIndex = user.products.findIndex(product => product._id.toString() === productId)
+        if(productIndex === -1) {
+            return res.status(404).json({ msg: "Produto não encontrado!" })
+        }
+        user.products.splice(productIndex, 1) //remove um elemento no indice encontrado
+        await user.save()
+        res.status(200).json({ msg: "Produto deletado com sucesso!" })
+    } catch (error) {
+        console.log("Erro ao deletar produto:", error)
+        res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
+    }
+})
+
 const conn = require("./db/Connect.js")
 conn()
 cron()
