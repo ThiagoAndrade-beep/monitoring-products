@@ -15,7 +15,7 @@ function normalizePrice(price) {
 
 function startPriceMonitorJob() {
 
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('0 * * * *', async () => {
         console.log('⏱ Rodando monitoramento de preços...');
 
         const users = await User.find({
