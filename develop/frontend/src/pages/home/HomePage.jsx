@@ -18,7 +18,7 @@ const HomePage = () => {
 
             <div className='apresentation-buttons'>
                 <button className='btn-createAccount'>
-                    <Link to="/RegisterUser">Começar Gratuitamente</Link>
+                    <Link to="/RegisterUser">Comeceeee Gratuitamente</Link>
                     <img src={setaDireita} alt="seta pra direita" />
                 </button>
                 <button className='btn-loginAccount'>
