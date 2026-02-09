@@ -27,7 +27,7 @@ function startPriceMonitorJob() {
                 const [data] = await takingData(product.link)
                 const currentPrice = normalizePrice(data.price);
                 const previousPrice = product.lastPrice;
-                const fakePrice = currentPrice - 30;
+                const fakePrice = currentPrice - 10;
 
                 if (fakePrice !== previousPrice) {
 
