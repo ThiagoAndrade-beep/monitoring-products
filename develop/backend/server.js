@@ -249,4 +249,4 @@ app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
 
 const conn = require("./db/Connect.js")
 conn()
-cron()
+//cron()
