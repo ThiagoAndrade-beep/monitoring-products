@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const fetchApi = axios.create({
-    baseURL: import.meta.env.VITE_API_URL + "/auth",
+    baseURL: import.meta.env.VITE_API_URL + "auth",
     headers: {
         "Content-Type": "application/json"
     }
