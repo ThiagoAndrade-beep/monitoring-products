@@ -40,6 +40,7 @@ function startPriceMonitorJob() {
                                 newPrice: fakePrice,
                                 link: product.link
                             })
+                            console.log(`Email de queda de preço enviado para ${user.email} sobre o produto "${product.name}".`);
                         } catch (error) {
                             console.error("Erro ao enviar email:", error);
                         }
