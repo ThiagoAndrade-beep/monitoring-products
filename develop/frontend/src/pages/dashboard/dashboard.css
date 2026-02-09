@@ -399,6 +399,12 @@
   .product-link {
     width: 100%;
   }
+
+  .products-icons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 768px) {
