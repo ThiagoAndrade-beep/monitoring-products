@@ -1,27 +1,25 @@
-const nodemailer = require("nodemailer")
-require("dotenv").config()
+require('dotenv').config();
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-     connectionTimeout: 60000,
-     greetingTimeout: 60000,
-     socketTimeout: 300000
-});
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 async function sendPriceDropEmail({ to, productName, oldPrice, newPrice, link }) {
-    await transporter.sendMail({
-        from: `"Price Monitor" <${process.env.EMAIL_USER}`,
-        to,
-        subject: "O preço do produto caiu",
-        text: `Boa notícia! o preço do produto ${productName} caiu. De: ${oldPrice} Para: ${newPrice}. Link do Produto: ${link}`
-    });
+    try {
+        await resend.emails.send({
+            from: 'Monitoring Products <onboarding@resend.dev>',
+            to,
+            subject: "O preço do produto caiu",
+            html: `
+            <p><strong>Boa notícia!</strong></p>
+            <p>O preço do produto <b>${productName}</b> caiu.</p>
+            <p>De: R$ ${oldPrice}<br/>
+            Para: R$ ${newPrice}</p>
+            <p><a href="${link}">Ver produto</a></p>
+            `
+        });
+    } catch (error) {
+        console.error("Erro ao enviar email:", error);
+    }
 }
 
 module.exports = { sendPriceDropEmail }
