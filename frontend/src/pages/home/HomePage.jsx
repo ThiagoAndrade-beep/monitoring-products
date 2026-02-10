@@ -13,7 +13,7 @@ const HomePage = () => {
     <main className='container'>
         <section className='container-apresentation'>
             <img src={caixa} alt="pacote" id='caixa'/>
-            <h1>Monitore Produtos da Amazon em Tempo Real</h1>
+            <h1>Monitoreee Produtos da Amazon em Tempo Real</h1>
             <p>Nunca mais perca uma promoção. Acompanhe preços, receba alertas e economize dinheiro com nosso sistema inteligente de monitoramento.</p>
 
             <div className='apresentation-buttons'>

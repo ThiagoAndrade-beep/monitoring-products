@@ -27,7 +27,7 @@ function startPriceMonitorJob() {
                 const [data] = await takingData(product.link)
                 const currentPrice = normalizePrice(data.price);
                 const previousPrice = product.lastPrice;
-                //const fakePrice = currentPrice - 100;
+                //const fakePrice = currentPrice - 10;
 
                 if (currentPrice !== previousPrice) {
 
@@ -40,6 +40,7 @@ function startPriceMonitorJob() {
                                 newPrice: currentPrice,
                                 link: product.link
                             })
+                            console.log(`Email de queda de preço enviado para ${user.email} sobre o produto "${product.name}".`);
                         } catch (error) {
                             console.error("Erro ao enviar email:", error);
                         }
