@@ -62,7 +62,7 @@ o usuário recebe um e-mail de notificação
 
 -Puppeteer
 
--Nodemailer
+-Resend(para emails)
 
 🔹 Front-end
 
