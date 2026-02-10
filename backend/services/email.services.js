@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 async function sendPriceDropEmail({ to, productName, oldPrice, newPrice, link }) {
     try {
         await resend.emails.send({
-            from: 'Monitoring Products <onboarding@resend.dev>',
+            from: 'Monitoring Products <alerts@monitoringproducts.com.br>',
             to,
             subject: "O preço do produto caiu",
             html: `
