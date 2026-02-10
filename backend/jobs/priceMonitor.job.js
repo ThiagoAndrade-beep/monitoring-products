@@ -15,7 +15,7 @@ function normalizePrice(price) {
 
 function startPriceMonitorJob() {
 
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('0 * * * *', async () => {
         console.log('⏱ Rodando monitoramento de preços...');
 
         const users = await User.find({
@@ -27,17 +27,17 @@ function startPriceMonitorJob() {
                 const [data] = await takingData(product.link)
                 const currentPrice = normalizePrice(data.price);
                 const previousPrice = product.lastPrice;
-                const fakePrice = currentPrice - 10;
+                //const fakePrice = currentPrice - 10;
 
-                if (fakePrice !== previousPrice) {
+                if (currentPrice !== previousPrice) {
 
-                    if (fakePrice < previousPrice) {
+                    if (currentPrice < previousPrice) {
                         try {
                             await sendPriceDropEmail({
                                 to: user.email,
                                 productName: product.name,
                                 oldPrice: previousPrice,
-                                newPrice: fakePrice,
+                                newPrice: currentPrice,
                                 link: product.link
                             })
                             console.log(`Email de queda de preço enviado para ${user.email} sobre o produto "${product.name}".`);
@@ -49,11 +49,11 @@ function startPriceMonitorJob() {
                     }
 
                     product.history.push({
-                        price: fakePrice,
+                        price: currentPrice,
                         date: new Date()
                     });
 
-                    product.lastPrice = fakePrice;
+                    product.lastPrice = currentPrice;
                     await user.save()
                 } else {
                     console.log(`O preço do produto "${product.name}" não mudou.`);
