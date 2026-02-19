@@ -12,8 +12,8 @@ import { infoProducts } from '../../service/Product.service.js'
 import { deleteProducts } from '../../service/DeleteProduct.service.js'
 import CardUser from '../../components/card-user/CardUser.jsx'
 import CardUrl from '../../components/card-url/CardUrl.jsx'
-import CardNoProduct from '../../components/card-noProduct/cardNoProduct.jsx'
 import CardsProducts from '../../components/cards-products/CardsProducts.jsx'
+import CardNoProduct from '../../components/card-noProduct/CardNoProduct.jsx'
 
 const Dashboard = () => {
     const navigate = useNavigate()
