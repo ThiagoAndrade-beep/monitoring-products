@@ -1,11 +1,12 @@
-import React from 'react'
 import caixa from "../../assets/caixa.png"
 import { Link } from 'react-router-dom'
 import './register.css'
 import { useState } from 'react'
-import fetchApi from '../../axios/config'
 import { ToastContainer, toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { registerUser } from '../../service/Register.service.js'
+import Input from '../../components/ui/input/Input'
+import { validatorPassword } from '../../utils/validatorPassword'
 
 const Register = () => {
 
@@ -13,9 +14,7 @@ const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordVisible, setPasswordVisible] = useState(false)
-
-  const passwordRegex = /^(?=.*[@$!%*?&#])/; //Lookahead positivo — verifica se existe pelo menos um caractere especial
-  const result = passwordRegex.test(password)
+  const {minLength, resultPassword} = validatorPassword(password)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,8 +26,8 @@ const Register = () => {
     }
 
     try {
-      const response = await fetchApi.post("register", user)
-      toast.success(response.data.msg)
+      const response = await registerUser(user)
+      toast.success(response.msg)
 
       setName("")
       setEmail("")
@@ -36,7 +35,7 @@ const Register = () => {
 
     } catch (error) {
       console.log("Erro ao cadastrar o usuário", error)
-      toast.error(error.response.data.msg)
+      toast.error(error.response?.data?.msg || "Erro ao realizar cadastro. Tente novamente.")
     }
   }
 
@@ -57,29 +56,46 @@ const Register = () => {
         <form onSubmit={handleSubmit}>
           <label className='register name'>
             <span>Nome</span>
-            <input type="text" placeholder='Digite seu nome' name='name' required value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              type='text'
+              name='name'
+              placeholder='Digite seu nome'
+              value={name}
+              setState={setName}
+            />
           </label>
 
           <label className='register email'>
             <span>Email</span>
-            <input type="email" placeholder='seuEmail@gmail.com' name='email' required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              type='email'
+              name='email'
+              placeholder='seuEmail@gmail.com'
+              value={email}
+              setState={setEmail}
+            />
           </label>
 
           <label className='register password'>
             <span>Senha</span>
             <div className="password-input-container">
-              <input type={passwordVisible ? "text" : "password"} placeholder="******" name="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+              <Input
+                type={passwordVisible ? 'text' : 'password'}
+                name='password'
+                placeholder="******"
+                value={password}
+                setState={setPassword}
               />
-              <button type="button" className="toggle-password"onClick={changePasswordView}>
-                {passwordVisible ? <FaEyeSlash color='#fff'/> : <FaEye color='#fff'/>}
+              <button type="button" className="toggle-password" onClick={changePasswordView}>
+                {passwordVisible ? <FaEyeSlash color='#fff' /> : <FaEye color='#fff' />}
               </button>
             </div>
           </label>
-          
-          {password && password.length < 6 && (
+
+          {password && minLength && (
             <p className='password-warning'>A senha deve conter no mínimo 6 caracteres!</p>
           )}
-          {password && !result && (
+          {password && !resultPassword && (
             <p className='password-warning'>A senha deve conter pelo menos um caractere especial!</p>
           )}
 

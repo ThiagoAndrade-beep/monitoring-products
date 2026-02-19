@@ -1,0 +1,52 @@
+.info-url {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    width: 100%;
+}
+
+.info-url-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-url-texts h2 {
+    color: var(--color-text-primary);
+}
+
+.info-url-texts p {
+    color: var(--color-text-secondary);
+}
+
+.url-action {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.url-action span {
+    color: var(--color-text-primary);
+    font-size: 15px;
+}
+
+.url-action input {
+    background-color: var(--color-input);
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+}
+
+#add-url {
+    padding: 0.7rem;
+    background-color: var(--color-accent);
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}

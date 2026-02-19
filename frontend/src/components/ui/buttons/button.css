@@ -1,0 +1,54 @@
+.button-createAccount {
+    background-color: var(--color-accent);
+    border: none;
+    padding: 1.5rem;
+    border-radius: 8px;
+    font-size: 22px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-createAccount a{
+    text-decoration: none;
+    color: var(--color-input);
+} 
+
+.button-login {
+    padding: 1.5rem;
+    border: 1px solid var(--color-accent-light);
+    background-color: transparent;
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-login a {
+    text-decoration: none;
+    color: var(--color-text-primary);
+}
+
+.button-closure {
+    background-color: var(--color-accent);
+    border: none;
+    padding: 1.2rem;
+    border-radius: 8px;
+    font-size: 18px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.button-closure a {
+    text-decoration: none;
+    color: var(--color-input);
+}

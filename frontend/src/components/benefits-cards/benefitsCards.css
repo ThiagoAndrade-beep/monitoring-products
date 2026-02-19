@@ -1,0 +1,40 @@
+.card {
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+    gap: 1rem;
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
+  }
+
+.icon  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-accent);
+    padding: 10px;
+    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 0.8rem;
+}
+
+.card h3 {
+    color: var(--color-text-primary);
+}
+
+.card p {
+    color: var(--color-text-secondary);
+    line-height: 1.4rem;
+}

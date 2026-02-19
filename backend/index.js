@@ -1,40 +1,46 @@
 const puppeteer = require("puppeteer")
 
 async function takingData(url) {
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--no-zygote',
-            '--single-process'
+    try {
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--no-zygote'
+            ]
+        })
+        const newPage = await browser.newPage()
+        await newPage.setUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+        )
+        console.log('url', url)
+        await newPage.goto(url, { waitUntil: "networkidle2", timeout: 60000 })
+        console.log('URL final')
+
+        const nameSelector = "#productTitle"
+        await newPage.waitForSelector(nameSelector)
+        const name = await newPage.$eval(nameSelector, (el) => el.innerHTML.trim())
+
+        const priceSelector = "span.a-price > span.a-offscreen"
+        await newPage.waitForSelector(priceSelector)
+        const price = await newPage.$eval(priceSelector, (el) => el.innerHTML.trim())
+
+
+        await browser.close()
+
+        return [
+            {
+                url,
+                name,
+                price,
+                timeStamp: new Date().toISOString()
+            }
         ]
-    })
-    const newPage = await browser.newPage()
-
-    await newPage.goto(url, { waitUntil: "load" })
-
-    const nameSelector = "#productTitle"
-    await newPage.waitForSelector(nameSelector)
-    const name = await newPage.$eval(nameSelector, (el) => el.innerHTML.trim())
-
-    const priceSelector = "span.a-price > span.a-offscreen"
-    await newPage.waitForSelector(priceSelector)
-    const price = await newPage.$eval(priceSelector, (el) => el.innerHTML.trim())
-
-
-    await browser.close()
-
-    return [
-        {
-            url,
-            name,
-            price,
-            timeStamp: new Date().toISOString()
-        }
-    ]
+    } catch (error) {
+        console.log('erro no puppeteer', error)
+    }
 
 }
 module.exports = takingData 

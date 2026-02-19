@@ -1,43 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import entrar from "../../assets/entrar.png"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
 import './login.css'
-import fetchApi from '../../axios/config';
+import { authUser } from '../../service/Auth.service.js';
+import Input from '../../components/ui/input/Input.jsx';
 
 const Login = () => {
   const [visiblePassword, setVisiblePassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const {id} = useParams()
   const navigate = useNavigate()
 
-  const user = {
-    email,
-    password
-  }
-
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault() 
+
+    const user = {
+      email,
+      password
+    }
 
     try {
-      const response = await fetchApi.post("/login", user)
-      const token = response.data.token
-      const userId = response.data.userId
+      const data = await authUser(user)
+      console.log(data)
 
-      localStorage.setItem("token", token)
-      localStorage.setItem("userId", userId)
+      localStorage.setItem("token", data.token)
+      localStorage.setItem("userId", data.userId)
 
-      console.log(response)
-      setTimeout(() => {
-        toast.success(response.data.msg)
-      }, 2000);
+      toast.success(data.msg)
 
-      navigate(`/Dashboard/${userId}`)
+      navigate(`/Dashboard/${data.userId}`)
     } catch (error) {
-      console.log("Erro ao fazer login", error)
-      toast.error(error.response.data.msg)
+      toast.error(error.response?.data?.msg || "Erro ao realizar login. Tente novamente.")
     }
   }
 
@@ -58,16 +53,27 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <label className='login email'>
             <span>Email</span>
-            <input type="email" placeholder='seuEmail@gmail.com' name='email' required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              type='email'
+              name='email'
+              placeholder='seuEmail@gmail.com'
+              value={email}
+              setState={setEmail}
+            />
           </label>
 
           <label className='register password'>
             <span>Senha</span>
             <div className="password-input-container">
-              <input type={visiblePassword ? "text" : "password"} placeholder="******" name="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+              <Input
+                type={visiblePassword ? "text" : "password"}
+                name='password'
+                placeholder='******'
+                value={password}
+                setState={setPassword}
               />
               <button type="button" className="toggle-password" onClick={changePasswordView}>
-                {visiblePassword ? <FaEyeSlash color='#fff' /> : <FaEye color='#fff' />}
+                {visiblePassword ? <FaEyeSlash color='#bdbbbb' /> : <FaEye color='#bdbbbb' />}
               </button>
             </div>
           </label>
