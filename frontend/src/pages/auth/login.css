@@ -65,23 +65,6 @@
     color: var(--color-text-primary);
   }
 
-  .login input {
-    background-color: var(--color-input);
-    border: none;
-    padding: 0.8rem;
-    border-radius: 8px;
-    color: var(--color-text-primary);
-  }
-
-  .input-login {
-    padding: 0.8rem;
-    background-color: var(--color-accent);
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-
   .link-register {
     text-decoration: none;
     text-align: center;

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import fetchApi from '../../axios/config'
 import caixa from "../../assets/caixa.png"
 import sair from "../../assets/sair.png"
 import caixaLaranja from "../../assets/caixa-laranja.png"
-import caixaCinza from "../../assets/caixa-cinza.png"
 import { ToastContainer, toast } from 'react-toastify';
 import './dashboard.css'
-import { FiCalendar } from "react-icons/fi";
-import { FiExternalLink } from "react-icons/fi";
-import { FiBox } from "react-icons/fi";
-import { FiTrash } from "react-icons/fi";
+import { infoUser } from '../../service/User.service.js'
+import { addUrl } from '../../service/AddUrl.service.js'
+import { getToken, removeToken } from '../../utils/token.js'
+import { infoProducts } from '../../service/Product.service.js'
+import { deleteProducts } from '../../service/DeleteProduct.service.js'
+import CardUser from '../../components/card-user/CardUser.jsx'
+import CardUrl from '../../components/card-url/CardUrl.jsx'
+import CardsProducts from '../../components/cards-products/CardsProducts.jsx'
+import CardNoProduct from '../../components/card-noProduct/CardNoProduct.jsx'
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -22,20 +25,15 @@ const Dashboard = () => {
     //validação após o login
     useEffect(() => {
         const reqGet = async () => {
-            const token = localStorage.getItem("token")
+            const token = getToken()
 
             if (!token) {
                 navigate("/LoginUser")
                 return
             }
             try {
-                const response = await fetchApi.get(`user/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                console.log("Usuário autenticado:", response)
-                setData(response.data.userData)
+                const response = await infoUser(id, token)
+                setData(response.userData)
             } catch (error) {
                 if (error.response?.status === 401) {
                     navigate("/LoginUser")
@@ -48,42 +46,34 @@ const Dashboard = () => {
 
     //função de logout
     function handleLogout() {
-        localStorage.removeItem("token")
+        removeToken()
         navigate("/LoginUser")
     }
 
     //enviando url para o servidor
     async function handleSubmitUrl(e) {
         e.preventDefault()
-        const token = localStorage.getItem("token")
+        const token = getToken()
 
         try {
-            const response = await fetchApi.post("/add-url", { novaUrl }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            const response = await addUrl(novaUrl, token)
 
-            console.log("url adicionada:", response.data)
-            toast.success(response.data.msg)
+            console.log("url adicionada:", response)
+            toast.success(response.msg)
         } catch (error) {
             console.log("erro ao enviar url:", error)
-            toast.error(error.response.data.msg)
+            toast.error(error.response?.data?.msg || "Erro ao adicionar URL")
         }
     }
 
     //buscando pelos dados dos produtos
     useEffect(() => {
         const reqGetProducts = async () => {
-            const token = localStorage.getItem("token")
+            const token = getToken()
 
             try {
-                const response = await fetchApi.get("/view-products", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                setDataProducts(response.data.products)
+                const response = await infoProducts(token)
+                setDataProducts(response.products)
             } catch (error) {
                 console.log("Erro ao buscar pelos produtos:", error)
             }
@@ -92,22 +82,18 @@ const Dashboard = () => {
     }, [novaUrl])
 
     async function deleteProduct(productId) {
-        const token = localStorage.getItem("token")
+        const token = getToken()
 
         try {
-            const response = await fetchApi.delete(`delete-product/${productId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            console.log("Produto deletado:", response.data)
-            toast.success(response.data.msg)
+            const response = await deleteProducts(token, productId)
+            console.log("Produto deletado:", response)
+            toast.success(response.msg)
 
             setDataProducts(prev =>
                 prev.filter(product => product._id !== productId)
             )
         } catch (error) {
-            toast.error(error.response.data.msg)
+            toast.error(error.response?.data?.msg)
         }
     }
 
@@ -133,35 +119,8 @@ const Dashboard = () => {
             </header>
 
             <section className='card-information'>
-                <div className='info-user'>
-                    <div className='info'>
-                        <h2>Informações do Usuário</h2>
-                        <p>Seus dados cadastrados</p>
-                    </div>
-                    <div className='info-name'>
-                        <p>Nome</p>
-                        <span>{data.name}</span>
-                    </div>
-                    <div className='info-email'>
-                        <p>Email</p>
-                        <span>{data.email}</span>
-                    </div>
-                </div>
-
-                <div className='info-url'>
-                    <div className='info-url-texts'>
-                        <h2>+ Adicionar Produto</h2>
-                        <p>Cole a URL do produto da Amazon</p>
-                    </div>
-
-                    <form onSubmit={handleSubmitUrl}>
-                        <label className='url-action'>
-                            <span>Link do produto Amazon</span>
-                            <input type="text" placeholder='https://amazon.com.br/produto...' name='novaUrl' value={novaUrl} onChange={(e) => setNovaUrl(e.target.value)} />
-                        </label>
-                        <input type="submit" value="Adicionar produto" id='add-url' />
-                    </form>
-                </div>
+                    <CardUser name={data.name} email={data.email}/>
+                    <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl}/>
             </section>
 
             <section className='registered-products'>
@@ -169,35 +128,13 @@ const Dashboard = () => {
                     <img src={caixaLaranja} alt="caixa laranja" />
                     <h2>Produtos cadastrados ({dataProducts?.length})</h2>
                 </div>
+                
                 {!dataProducts || dataProducts?.length === 0 ? (
-                    <div className='no-products'>
-                        <div className='no-product'>
-                            <img src={caixaCinza} alt="caixa cinza" />
-                            <span>Nenhum produto cadastrado ainda</span>
-                            <p>Adicione sua primeira URL para começar a monitorar</p>
-                        </div>
-                    </div>
+                    <CardNoProduct />
                 ) : (
                     <div className="products-list"> {/*container*/}
                         {dataProducts.map(item => (
-                            <div className='product' key={item._id}> {/*card do produto*/}
-                                <div className='products'> {/*organização interna*/}
-                                    <div className='products-icons'>
-                                        <div className='icon-box'><FiBox size={24} color='#ff6600' /></div>
-                                        <div className='icon-remove' onClick={() => deleteProduct(item._id)}><FiTrash size={22} color='#ff4d4d' /></div>
-                                    </div>
-                                    <p className='product-name'>{item.name}</p>
-                                    <p className='product-price'>R$ {item.lastPrice}</p>
-                                    <div className='products-date'>
-                                        <FiCalendar size={18} color='#b5b5b5' />
-                                        <p>Produto adicionado no dia: {new Date(item.createdAt).toLocaleString("pt-BR")}</p>
-                                    </div>
-                                    <button className='product-link'>
-                                        <FiExternalLink size={18} color='#b5b5b5' />
-                                        <a href={item.link}>Link do produto</a>
-                                    </button>
-                                </div>
-                            </div>
+                           <CardsProducts key={item._id} item={item} deleteProduct={deleteProduct}/>
                         ))}
                     </div>
                 )}

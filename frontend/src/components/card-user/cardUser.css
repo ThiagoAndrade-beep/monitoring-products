@@ -1,0 +1,54 @@
+.info-user {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--color-card);
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    width: 100%;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info h2 {
+    color: var(--color-text-primary);
+}
+
+.info p {
+    color: var(--color-text-secondary);
+}
+
+.info-name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-name p {
+    color: var(--color-text-secondary);
+}
+
+.info-name span {
+    color: var(--color-text-primary);
+    font-size: 18px;
+}
+
+.info-email {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-email p {
+    color: var(--color-text-secondary);
+}
+
+.info-email span {
+    color: var(--color-text-primary);
+    font-size: 18px;
+}

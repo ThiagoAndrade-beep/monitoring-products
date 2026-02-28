@@ -187,6 +187,7 @@ app.post("/auth/add-url", checkToken, async (req, res) => {
         }
 
         const [productData] = await takingData(novaUrl)
+        console.log('verificando product data', productData)
         const normalizedPrice = normalizePrice(productData.price);
 
         user.products.push({
@@ -228,6 +229,7 @@ app.get("/auth/view-products", checkToken, async (req, res) => {
 app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
     const userId = req.user
     const productId = req.params.productId
+    console.log('productid', productId)
 
     try {
         const user = await User.findById(userId) 
