@@ -38,6 +38,7 @@ async function takingData(url) {
         ]
     } catch (error) {
         console.log('erro no puppeteer', error)
+        throw error
     }
 
 }
