@@ -15,9 +15,7 @@ async function takingData(url) {
         await newPage.setUserAgent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
         )
-        console.log('url', url)
         await newPage.goto(url, { waitUntil: "domcontentloaded"})
-        console.log('URL final')
 
         const nameSelector = "#productTitle"
         await newPage.waitForSelector(nameSelector, { timeout: 60000 })
