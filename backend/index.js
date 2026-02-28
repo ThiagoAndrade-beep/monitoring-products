@@ -1,7 +1,7 @@
 const { getBrowser } = require("./services/browser")
 
 async function takingData(url) {
-    const browser = getBrowser()
+    const browser = await getBrowser()
     const page = await browser.newPage()
     
     try {
