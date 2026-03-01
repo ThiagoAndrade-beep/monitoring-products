@@ -15,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault() 
+    e.preventDefault()
 
     const user = {
       email,
@@ -83,7 +83,11 @@ const Login = () => {
           </label>
 
           <button type='submit' className={`input-register ${loading ? 'loading' : ''}`}>
-              {loading ? <span className='mini-loader'></span> : 'Entrar'}
+            {loading ? <div class="dots-loader">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div> : 'Entrar'}
           </button>
           <Link to="/RegisterUser" className='link-register'>Não tem conta ? <span className='span-register'>Cadastre-se</span></Link>
         </form>
