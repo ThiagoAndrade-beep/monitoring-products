@@ -11,6 +11,7 @@ const Login = () => {
   const [visiblePassword, setVisiblePassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -21,6 +22,7 @@ const Login = () => {
       password
     }
 
+    setLoading(true)
     try {
       const data = await authUser(user)
       console.log(data)
@@ -33,6 +35,8 @@ const Login = () => {
       navigate(`/Dashboard/${data.userId}`)
     } catch (error) {
       toast.error(error.response?.data?.msg || "Erro ao realizar login. Tente novamente.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -78,7 +82,9 @@ const Login = () => {
             </div>
           </label>
 
-          <input type="submit" value="Entrar" className='input-register' />
+          <button type='submit' className={`input-register ${loading ? 'loading' : ''}`}>
+              {loading ? <span className='mini-loader'></span> : 'Entrar'}
+          </button>
           <Link to="/RegisterUser" className='link-register'>Não tem conta ? <span className='span-register'>Cadastre-se</span></Link>
         </form>
       </div>
