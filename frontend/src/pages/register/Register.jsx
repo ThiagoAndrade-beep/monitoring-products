@@ -14,7 +14,8 @@ const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordVisible, setPasswordVisible] = useState(false)
-  const {minLength, resultPassword} = validatorPassword(password)
+  const { minLength, resultPassword } = validatorPassword(password)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -25,6 +26,7 @@ const Register = () => {
       password
     }
 
+    setLoading(true)
     try {
       const response = await registerUser(user)
       toast.success(response.msg)
@@ -36,6 +38,8 @@ const Register = () => {
     } catch (error) {
       console.log("Erro ao cadastrar o usuário", error)
       toast.error(error.response?.data?.msg || "Erro ao realizar cadastro. Tente novamente.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -99,7 +103,13 @@ const Register = () => {
             <p className='password-warning'>A senha deve conter pelo menos um caractere especial!</p>
           )}
 
-          <input type="submit" value="Cadastrar Conta" className='input-register' />
+          <button type='submit' className={`input-register ${loading ? 'loading' : ''}`}>
+            {loading ? <div className="dots-loader">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div> : 'Entrar'}
+          </button>
           <Link to="/LoginUser" className='link-login'>Já tem conta ? <span className='span-login'>Faça login</span></Link>
         </form>
       </div>

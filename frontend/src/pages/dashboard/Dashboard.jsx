@@ -21,6 +21,7 @@ const Dashboard = () => {
     const [data, setData] = useState(null)
     const [novaUrl, setNovaUrl] = useState("")
     const [dataProducts, setDataProducts] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     //validação após o login
     useEffect(() => {
@@ -54,6 +55,7 @@ const Dashboard = () => {
     async function handleSubmitUrl(e) {
         e.preventDefault()
         const token = getToken()
+        setLoading(true)
 
         try {
             const response = await addUrl(novaUrl, token)
@@ -63,6 +65,8 @@ const Dashboard = () => {
         } catch (error) {
             console.log("erro ao enviar url:", error)
             toast.error(error.response?.data?.msg || "Erro ao adicionar URL")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -98,7 +102,9 @@ const Dashboard = () => {
     }
 
     if (!data) {
-        return <p>Carregando...</p>
+        return <div className="loader-container">
+            <div className="loader"></div>
+        </div>
     }
     return (
         <main className='dashboard-container'>
@@ -119,8 +125,8 @@ const Dashboard = () => {
             </header>
 
             <section className='card-information'>
-                    <CardUser name={data.name} email={data.email}/>
-                    <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl}/>
+                <CardUser name={data.name} email={data.email} />
+                <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl} loading={loading}/>
             </section>
 
             <section className='registered-products'>
@@ -128,13 +134,13 @@ const Dashboard = () => {
                     <img src={caixaLaranja} alt="caixa laranja" />
                     <h2>Produtos cadastrados ({dataProducts?.length})</h2>
                 </div>
-                
+
                 {!dataProducts || dataProducts?.length === 0 ? (
                     <CardNoProduct />
                 ) : (
                     <div className="products-list"> {/*container*/}
                         {dataProducts.map(item => (
-                           <CardsProducts key={item._id} item={item} deleteProduct={deleteProduct}/>
+                            <CardsProducts key={item._id} item={item} deleteProduct={deleteProduct} />
                         ))}
                     </div>
                 )}
