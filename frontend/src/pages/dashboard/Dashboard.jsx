@@ -98,8 +98,8 @@ const Dashboard = () => {
     }
 
     if (!data) {
-        return <div className='loader-container'>
-            <div className='loader'></div>
+        return <div className="loader-container">
+            <div className="loader"></div>
         </div>
     }
     return (
@@ -121,8 +121,8 @@ const Dashboard = () => {
             </header>
 
             <section className='card-information'>
-                    <CardUser name={data.name} email={data.email}/>
-                    <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl}/>
+                <CardUser name={data.name} email={data.email} />
+                <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl} />
             </section>
 
             <section className='registered-products'>
@@ -130,13 +130,13 @@ const Dashboard = () => {
                     <img src={caixaLaranja} alt="caixa laranja" />
                     <h2>Produtos cadastrados ({dataProducts?.length})</h2>
                 </div>
-                
+
                 {!dataProducts || dataProducts?.length === 0 ? (
                     <CardNoProduct />
                 ) : (
                     <div className="products-list"> {/*container*/}
                         {dataProducts.map(item => (
-                           <CardsProducts key={item._id} item={item} deleteProduct={deleteProduct}/>
+                            <CardsProducts key={item._id} item={item} deleteProduct={deleteProduct} />
                         ))}
                     </div>
                 )}
