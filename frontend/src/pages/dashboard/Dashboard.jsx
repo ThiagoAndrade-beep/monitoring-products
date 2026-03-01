@@ -21,6 +21,7 @@ const Dashboard = () => {
     const [data, setData] = useState(null)
     const [novaUrl, setNovaUrl] = useState("")
     const [dataProducts, setDataProducts] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     //validação após o login
     useEffect(() => {
@@ -54,6 +55,7 @@ const Dashboard = () => {
     async function handleSubmitUrl(e) {
         e.preventDefault()
         const token = getToken()
+        setLoading(true)
 
         try {
             const response = await addUrl(novaUrl, token)
@@ -63,6 +65,8 @@ const Dashboard = () => {
         } catch (error) {
             console.log("erro ao enviar url:", error)
             toast.error(error.response?.data?.msg || "Erro ao adicionar URL")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -122,7 +126,7 @@ const Dashboard = () => {
 
             <section className='card-information'>
                 <CardUser name={data.name} email={data.email} />
-                <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl} />
+                <CardUrl handleSubmitUrl={handleSubmitUrl} novaUrl={novaUrl} setNovaUrl={setNovaUrl} loading={loading}/>
             </section>
 
             <section className='registered-products'>

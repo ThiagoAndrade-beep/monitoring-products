@@ -1,7 +1,7 @@
 import React from 'react'
 import './cardUrl.css'
 
-const CardUrl = ({handleSubmitUrl, novaUrl, setNovaUrl}) => {
+const CardUrl = ({ handleSubmitUrl, novaUrl, setNovaUrl, loading }) => {
     return (
         <div className='info-url'>
             <div className='info-url-texts'>
@@ -14,7 +14,13 @@ const CardUrl = ({handleSubmitUrl, novaUrl, setNovaUrl}) => {
                     <span>Link do produto Amazon</span>
                     <input type="text" placeholder='https://amazon.com.br/produto...' name='novaUrl' value={novaUrl} onChange={(e) => setNovaUrl(e.target.value)} />
                 </label>
-                <input type="submit" value="Adicionar produto" id='add-url' />
+                <button type='submit' className={`input-register ${loading ? 'loading' : ''}`}>
+                    {loading ? <div className="dots-loader">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div> : 'Adicionar produto'}
+                </button>
             </form>
         </div>
     )
