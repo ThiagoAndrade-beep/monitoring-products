@@ -98,7 +98,9 @@ const Dashboard = () => {
     }
 
     if (!data) {
-        return <div className='loader'></div>
+        return <div className='loader-container'>
+            <div className='loader'></div>
+        </div>
     }
     return (
         <main className='dashboard-container'>
