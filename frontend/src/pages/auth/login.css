@@ -82,7 +82,7 @@ form {
   background: var(--color-accent);
   border: none;
   border-radius: 6px;
-  color: white;
+  color: black;
   font-weight: bold;
   cursor: pointer;
   display: flex;
