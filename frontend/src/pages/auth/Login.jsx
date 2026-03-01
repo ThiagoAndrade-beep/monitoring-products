@@ -83,7 +83,7 @@ const Login = () => {
           </label>
 
           <button type='submit' className={`input-register ${loading ? 'loading' : ''}`}>
-            {loading ? <div class="dots-loader">
+            {loading ? <div className="dots-loader">
               <span></span>
               <span></span>
               <span></span>
