@@ -98,7 +98,7 @@ const Dashboard = () => {
     }
 
     if (!data) {
-        return <p>Carregando...</p>
+        return <div className='loader'></div>
     }
     return (
         <main className='dashboard-container'>

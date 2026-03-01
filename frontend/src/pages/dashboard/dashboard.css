@@ -113,6 +113,28 @@
     margin-top: 1.5rem;
 }
 
+.loader {
+  width: 40px;
+  margin: auto;
+  height: 40px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #ff8800,
+    #ff6600, 
+    #ff8800
+  );
+  animation: rotate 1s linear infinite;
+  mask: radial-gradient(farthest-side, transparent 60%, black 61%);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
 @media (max-width: 480px) {
     .dashboard-header {
         flex-direction: column;
