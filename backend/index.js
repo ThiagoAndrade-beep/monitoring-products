@@ -11,7 +11,7 @@ async function takingData(url) {
         await page.goto(url, { waitUntil: "networkidle2", timeout: 60000})
 
         const nameSelector = "#productTitle"
-        await page.waitForSelector(nameSelector, { timeout: 60000 })
+        await page.waitForSelector(nameSelector, { timeout: 60000, visible: true })
         const name = await page.$eval(nameSelector, (el) => el.innerHTML.trim())
 
         const priceSelector = "span.a-price > span.a-offscreen"
