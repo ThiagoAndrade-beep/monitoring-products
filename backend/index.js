@@ -3,12 +3,16 @@ const { getBrowser } = require("./services/browser")
 async function takingData(url) {
     const browser = await getBrowser()
     const page = await browser.newPage()
-    
+
     try {
-        await page.setUserAgent( 
+        await page.setUserAgent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
         )
-        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000})
+        await page.setViewport({ width: 1366, height: 768 })
+        await page.setExtraHTTPHeaders({
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+        })
+        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 })
 
         const nameSelector = "#productTitle"
         await page.waitForSelector(nameSelector, { timeout: 60000, visible: true })
