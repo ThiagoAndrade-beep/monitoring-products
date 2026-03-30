@@ -14,8 +14,6 @@ async function takingData(url) {
         })
         await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 })
 
-         await page.waitForTimeout(2000 + Math.random() * 3000)
-
         const nameSelector = "#productTitle"
         await page.waitForSelector(nameSelector, { timeout: 60000, visible: true })
         const name = await page.$eval(nameSelector, (el) => el.innerHTML.trim())
