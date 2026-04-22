@@ -5,6 +5,16 @@ async function takingData(url) {
     const page = await browser.newPage()
 
     try {
+        await page.setRequestInterception(true)
+        page.on('request', (req) => {
+            const blocked = ['image', 'stylesheet', 'font', 'media']
+            if (blocked.includes(req.resourceType())) {
+                req.abort()
+            } else {
+                req.continue()
+            }
+        })
+
         await page.setUserAgent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
         )
@@ -12,7 +22,7 @@ async function takingData(url) {
         await page.setExtraHTTPHeaders({
             "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
         })
-        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 })
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
 
         const nameSelector = "#productTitle"
         await page.waitForSelector(nameSelector, { timeout: 60000, visible: true })
