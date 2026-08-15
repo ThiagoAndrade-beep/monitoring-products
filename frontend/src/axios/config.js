@@ -1,10 +1,10 @@
 import axios from "axios"
 
-const fetchApi = axios.create({
-    baseURL: import.meta.env.VITE_API_URL + "auth",
+const fetchApiDev = axios.create({
+    baseURL: 'http://34.224.21.23:3000//auth',
     headers: {
         "Content-Type": "application/json"
     }
 })
 
-export default fetchApi
+export default fetchApiDev
