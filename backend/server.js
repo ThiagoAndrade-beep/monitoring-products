@@ -5,18 +5,16 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 const app = express()
-app.use(cors()) //libera tudo para testes
+const allowedOrigins = (process.env.FRONTEND_URL || "https://monitoring-products.vercel.app/")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json()) //"pega todas as requisições e tudo que tem no body converte para um json"
 
 const User = require("./models/Register.js")
 const takingData = require('./index.js')
 const cron = require('./jobs/priceMonitor.job.js');
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
 
 const checkToken = (req, res, next) => {
     const authHeader = req.headers["authorization"]
@@ -70,8 +68,8 @@ app.get("/auth/user/:id", checkToken, async (req, res) => {
     res.status(200).json({ userData })
 })
 
-app.get("/", (req, res) => {
-    res.status(200).json({ msg: "bem vindo ao monitoring products" })
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" })
 })
 
 app.post("/auth/register", async (req, res) => {
@@ -252,5 +250,20 @@ app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
 })
 
 const conn = require("./db/Connect.js")
-conn()
-cron()
+
+async function startServer() {
+    if (!process.env.SECRET) {
+        throw new Error("A variável SECRET não foi definida.")
+    }
+
+    await conn()
+    cron()
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Servidor rodando na porta ${PORT}`)
+    })
+}
+
+startServer().catch((error) => {
+    console.error("Não foi possível iniciar o servidor:", error)
+    process.exit(1)
+})
