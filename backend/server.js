@@ -68,7 +68,7 @@ app.get("/auth/user/:id", checkToken, async (req, res) => {
     res.status(200).json({ userData })
 })
 
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
     res.status(200).json({ status: "ok" })
 })
 
