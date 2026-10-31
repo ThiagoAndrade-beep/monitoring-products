@@ -7,4 +7,4 @@ const fetchApi = axios.create({
     }
 })
 
-export default fetchApiDev
+export default fetchApi
