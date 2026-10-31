@@ -5,11 +5,11 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 const app = express()
-const allowedOrigins = (process.env.FRONTEND_URL || "https://monitoring-products.vercel.app/")
+const allowedOrigins = (process.env.FRONTEND_URL || "https://monitoring-products-develop.vercel.app/")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean)
-app.use(cors({ origin: allowedOrigins }))
+app.use(cors({ origin: allowedOrigins} ))
 app.use(express.json()) //"pega todas as requisições e tudo que tem no body converte para um json"
 
 const User = require("./models/Register.js")
