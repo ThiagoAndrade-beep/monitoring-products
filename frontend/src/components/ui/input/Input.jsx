@@ -10,6 +10,7 @@ const Input = ({type, name, placeholder, value, setState}) => {
     value={value}
     onChange={(e) => setState(e.target.value)}
     required
+    
     />
   )
 }
