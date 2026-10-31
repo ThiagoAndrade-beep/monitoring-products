@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 const app = express()
-const allowedOrigins = (process.env.FRONTEND_URL || "https://monitoring-products-develop.vercel.app/")
+const allowedOrigins = (process.env.FRONTEND_URL || "https://monitoring-products-develop.vercel.app")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean)
