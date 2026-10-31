@@ -1,7 +1,7 @@
 import axios from "axios"
 
-const fetchApiDev = axios.create({
-    baseURL: 'https://api.monitoringproducts.com.br/auth',
+const fetchApi = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         "Content-Type": "application/json"
     }
