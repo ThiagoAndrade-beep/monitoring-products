@@ -252,6 +252,7 @@ app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
 const conn = require("./db/Connect.js")
 
 async function startServer() {
+    const PORT = process.env.PORT || 3000;
     if (!process.env.SECRET) {
         throw new Error("A variável SECRET não foi definida.")
     }
