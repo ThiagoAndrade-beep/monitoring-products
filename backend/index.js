@@ -3,6 +3,7 @@ const { getBrowser } = require("./services/browser")
 async function takingData(url) {
     const browser = await getBrowser()
     const page = await browser.newPage()
+    let response
 
     try {
         await page.setRequestInterception(true)
@@ -22,7 +23,7 @@ async function takingData(url) {
         await page.setExtraHTTPHeaders({
             "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
         })
-        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
+        response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
 
         const nameSelector = "#productTitle"
         await page.waitForSelector(nameSelector, { timeout: 60000, visible: true })
@@ -33,8 +34,6 @@ async function takingData(url) {
         const price = await page.$eval(priceSelector, (el) => el.innerHTML.trim())
 
 
-        await page.close()
-
         return [
             {
                 url,
@@ -44,8 +43,28 @@ async function takingData(url) {
             }
         ]
     } catch (error) {
-        console.log('erro no puppeteer', error)
+        let pageDetails = {}
+        try {
+            pageDetails = await page.evaluate(() => ({
+                title: document.title,
+                text: (document.body?.innerText || "").slice(0, 700)
+            }))
+        } catch (diagnosticError) {
+            pageDetails.diagnosticError = diagnosticError.message
+        }
+
+        console.error("Erro no Puppeteer ao ler a página:", {
+            message: error.message,
+            requestedUrl: url,
+            finalUrl: page.url(),
+            httpStatus: response?.status(),
+            ...pageDetails
+        })
         throw error
+    } finally {
+        if (!page.isClosed()) {
+            await page.close()
+        }
     }
 
 }
