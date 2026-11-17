@@ -42,15 +42,9 @@ const checkToken = (req, res, next) => {
     }
 }
 
-function normalizePrice(price) {
-    return Number(
-        price
-            .replace('R$', '')
-            .replace(/\./g, '')
-            .replace(',', '.')
-            .trim()
-    );
-}
+const { normalizePrice } = require("./utils/price.js")
+const { parseAmazonUrl } = require("./utils/amazonUrl.js")
+const { BlockedError, ProductUnavailableError } = require("./errors/scraper.errors.js")
 
 app.get("/auth/user/:id", checkToken, async (req, res) => {
     const id = req.params.id
@@ -165,17 +159,11 @@ app.post("/auth/add-url", checkToken, async (req, res) => {
         return res.status(422).json({ msg: "Insira uma URL!" })
     }
 
-    function urlValid(url) {
-        try {
-            new URL(url)
-            return true
-        } catch {
-            return false
-        }
-    }
-
-    if (!urlValid(novaUrl)) {
-        return res.status(422).json({ msg: "Insira uma URL válida!" })
+    // Só aceita produtos da amazon.com.br e grava a URL canônica (/dp/ASIN),
+    // sem parâmetros de rastreamento ou de sessão.
+    const parsedUrl = parseAmazonUrl(novaUrl)
+    if (!parsedUrl) {
+        return res.status(422).json({ msg: "Insira uma URL válida de produto da Amazon Brasil (amazon.com.br/dp/...)!" })
     }
 
     try {
@@ -184,9 +172,12 @@ app.post("/auth/add-url", checkToken, async (req, res) => {
             return res.status(404).json({ msg: "Usuário não encontrado!" })
         }
 
-        const [productData] = await takingData(novaUrl)
+        const [productData] = await takingData(parsedUrl.canonicalUrl)
         console.log('verificando product data', productData)
         const normalizedPrice = normalizePrice(productData.price);
+        if (!Number.isFinite(normalizedPrice)) {
+            return res.status(422).json({ msg: "Não foi possível ler o preço deste produto." })
+        }
 
         user.products.push({
             link: productData.url,
@@ -203,6 +194,12 @@ app.post("/auth/add-url", checkToken, async (req, res) => {
 
         res.status(200).json({ msg: "Produto adicionado com sucesso!", product: productData })
     } catch (error) {
+        if (error instanceof BlockedError) {
+            return res.status(503).json({ msg: "A consulta de preços está temporariamente indisponível. Tente novamente mais tarde." })
+        }
+        if (error instanceof ProductUnavailableError) {
+            return res.status(422).json({ msg: "Não foi possível obter o preço deste produto. Ele pode estar indisponível." })
+        }
         console.log("Erro ao adicionar produto:", error)
         res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
     }
