@@ -13,8 +13,12 @@ app.use(cors({ origin: allowedOrigins} ))
 app.use(express.json()) //"pega todas as requisições e tudo que tem no body converte para um json"
 
 const User = require("./models/Register.js")
-const takingData = require('./index.js')
-const cron = require('./jobs/priceMonitor.job.js');
+const WorkerStatus = require("./models/WorkerStatus.js")
+const workerRoutes = require("./routes/worker.routes.js")
+const { backfillProductAsins } = require("./services/productBackfill.js")
+
+// Rotas do worker local (scraper/), que consulta os preços e envia os resultados.
+app.use("/worker", workerRoutes)
 
 const checkToken = (req, res, next) => {
     const authHeader = req.headers["authorization"]
@@ -42,9 +46,7 @@ const checkToken = (req, res, next) => {
     }
 }
 
-const { normalizePrice } = require("./utils/price.js")
 const { parseAmazonUrl } = require("./utils/amazonUrl.js")
-const { BlockedError, ProductUnavailableError } = require("./errors/scraper.errors.js")
 
 app.get("/auth/user/:id", checkToken, async (req, res) => {
     const id = req.params.id
@@ -172,34 +174,47 @@ app.post("/auth/add-url", checkToken, async (req, res) => {
             return res.status(404).json({ msg: "Usuário não encontrado!" })
         }
 
-        const [productData] = await takingData(parsedUrl.canonicalUrl)
-        console.log('verificando product data', productData)
-        const normalizedPrice = normalizePrice(productData.price);
-        if (!Number.isFinite(normalizedPrice)) {
-            return res.status(422).json({ msg: "Não foi possível ler o preço deste produto." })
+        const { asin, canonicalUrl } = parsedUrl
+        if (user.products.some((product) => product.asin === asin)) {
+            return res.status(422).json({ msg: "Você já monitora este produto!" })
         }
 
-        user.products.push({
-            link: productData.url,
-            name: productData.name,
-            lastPrice: normalizedPrice,
-            history: [
-                {
-                    price: normalizedPrice
-                }
-            ]
-        });
+        // O preço é consultado pelo worker local. Se outro usuário já monitora
+        // este ASIN, reaproveitamos o último preço conhecido; senão o produto
+        // fica pendente até a próxima rodada do worker.
+        const known = await User.findOne(
+            { products: { $elemMatch: { asin, status: "ok" } } },
+            { "products.$": 1 }
+        )
+        const knownProduct = known?.products?.[0]
 
+        const newProduct = knownProduct
+            ? {
+                link: canonicalUrl,
+                asin,
+                name: knownProduct.name,
+                lastPrice: knownProduct.lastPrice,
+                status: "ok",
+                lastCheckedAt: knownProduct.lastCheckedAt,
+                history: [{ price: knownProduct.lastPrice }]
+            }
+            : {
+                link: canonicalUrl,
+                asin,
+                status: "pending",
+                history: []
+            }
+
+        user.products.push(newProduct)
         await user.save()
 
-        res.status(200).json({ msg: "Produto adicionado com sucesso!", product: productData })
+        const product = user.products[user.products.length - 1]
+        const msg = knownProduct
+            ? "Produto adicionado com sucesso!"
+            : "Produto adicionado! O preço aparece após a próxima verificação."
+
+        res.status(200).json({ msg, product })
     } catch (error) {
-        if (error instanceof BlockedError) {
-            return res.status(503).json({ msg: "A consulta de preços está temporariamente indisponível. Tente novamente mais tarde." })
-        }
-        if (error instanceof ProductUnavailableError) {
-            return res.status(422).json({ msg: "Não foi possível obter o preço deste produto. Ele pode estar indisponível." })
-        }
         console.log("Erro ao adicionar produto:", error)
         res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
     }
@@ -246,6 +261,28 @@ app.delete("/auth/delete-product/:productId", checkToken, async(req, res) => {
     }
 })
 
+// Situação do worker local, para o frontend avisar quando as verificações estão paradas.
+const WORKER_ONLINE_WINDOW_MS = 15 * 60 * 1000
+
+app.get("/auth/scraper-status", checkToken, async (req, res) => {
+    try {
+        const status = await WorkerStatus.findById("default").lean()
+        const lastSeenAt = status?.lastSeenAt || null
+        const online = Boolean(lastSeenAt && Date.now() - new Date(lastSeenAt).getTime() < WORKER_ONLINE_WINDOW_MS)
+        const paused = status?.state === "paused" && status?.pausedUntil && new Date(status.pausedUntil) > new Date()
+
+        res.status(200).json({
+            online,
+            state: paused ? "paused" : "running",
+            pausedUntil: paused ? status.pausedUntil : null,
+            lastSeenAt
+        })
+    } catch (error) {
+        console.log("Erro ao buscar status do scraper:", error)
+        res.status(500).json({ msg: "Erro no servidor, tente novamente mais tarde!" })
+    }
+})
+
 const conn = require("./db/Connect.js")
 
 async function startServer() {
@@ -254,8 +291,17 @@ async function startServer() {
         throw new Error("A variável SECRET não foi definida.")
     }
 
+    if ((process.env.WORKER_TOKEN || "").length < 32) {
+        console.warn("WORKER_TOKEN não definido (ou com menos de 32 caracteres): o worker local não conseguirá enviar preços.")
+    }
+
     await conn()
-    cron()
+    try {
+        await backfillProductAsins()
+    } catch (error) {
+        console.error("Erro no backfill de ASIN dos produtos:", error)
+    }
+
     app.listen(PORT, "0.0.0.0", () => {
         console.log(`Servidor rodando na porta ${PORT}`)
     })

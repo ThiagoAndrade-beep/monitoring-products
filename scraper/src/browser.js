@@ -7,18 +7,11 @@ let browserPromise = null
 async function launchBrowser() {
     const browser = await puppeteer.launch({
         headless: true,
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--no-zygote'
-        ]
+        executablePath: puppeteer.executablePath()
     })
 
     // Se o Chromium cair, a próxima chamada abre um novo em vez de usar um processo morto.
     browser.on('disconnected', () => {
-        console.warn('browser desconectado; será reiniciado na próxima consulta')
         browserPromise = null
     })
 
@@ -42,4 +35,14 @@ async function getBrowser() {
     return browserPromise
 }
 
-module.exports = { getBrowser }
+// Fecha o Chromium entre as rodadas para não deixar memória ocupada na máquina.
+async function closeBrowser() {
+    if (!browserPromise) return
+    const browser = await browserPromise.catch(() => null)
+    browserPromise = null
+    if (browser && browser.connected) {
+        await browser.close().catch(() => null)
+    }
+}
+
+module.exports = { getBrowser, closeBrowser }

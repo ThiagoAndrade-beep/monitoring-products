@@ -1,19 +1,24 @@
-const { getBrowser } = require("./services/browser")
-const scraperGuard = require("./services/scraperGuard")
-const { isAllowedAmazonHost } = require("./utils/amazonUrl")
-const { BlockedError, ProductUnavailableError } = require("./errors/scraper.errors")
+const { getBrowser } = require("./browser")
+const scraperGuard = require("./guard")
+// Reaproveita o validador do backend (mesmo repositório) para não duplicar as regras de URL.
+const { isAllowedAmazonHost } = require("../../backend/utils/amazonUrl")
+const { BlockedError, ProductUnavailableError } = require("./errors")
 
 const BLOCK_STATUSES = [403, 429, 503]
 
 // Contêineres do preço principal (bloco de compra), do mais específico ao mais genérico.
-// O último item mantém o comportamento antigo como fallback.
+// O fallback fica restrito à área do produto (#ppd): um "span.a-price" solto na página
+// pode ser de outro produto (carrosséis, patrocinados) e gerar uma queda de preço falsa.
 const PRICE_CONTAINERS = [
     "#corePrice_feature_div span.a-price:not(.a-text-price)",
     "#corePriceDisplay_desktop_feature_div span.a-price:not(.a-text-price)",
     "#corePrice_desktop span.a-price:not(.a-text-price)",
     "#apex_desktop span.a-price:not(.a-text-price)",
-    "span.a-price"
+    "#ppd span.a-price:not(.a-text-price)"
 ]
+
+// Sinais de produto esgotado/indisponível no bloco de compra.
+const OUT_OF_STOCK_SELECTORS = "#outOfStock, #outOfStockBuyBox_feature_div"
 
 async function detectBlock(page, response) {
     const httpStatus = response?.status()
@@ -91,6 +96,14 @@ async function takingData(url) {
         await page.waitForSelector(nameSelector, { timeout: 20000, visible: true })
         const name = await page.$eval(nameSelector, (el) => el.textContent.trim())
 
+        // Produto esgotado: não procuramos preço (qualquer valor encontrado seria de outro item).
+        if (await page.$(OUT_OF_STOCK_SELECTORS)) {
+            const availability = await page
+                .$eval("#availability", (el) => el.innerText.trim().slice(0, 200))
+                .catch(() => null)
+            throw new ProductUnavailableError("Produto indisponível no momento", { availability })
+        }
+
         // O preço vem no HTML inicial; a espera curta cobre layouts mais lentos.
         await page.waitForSelector(PRICE_CONTAINERS.join(", "), { timeout: 10000 }).catch(() => null)
         const price = await page.evaluate((containers) => {
@@ -110,7 +123,7 @@ async function takingData(url) {
 
         if (!price) {
             const availability = await page
-                .$eval("#availability", (el) => el.textContent.trim())
+                .$eval("#availability", (el) => el.innerText.trim().slice(0, 200))
                 .catch(() => null)
             throw new ProductUnavailableError("Preço não encontrado na página", { availability })
         }

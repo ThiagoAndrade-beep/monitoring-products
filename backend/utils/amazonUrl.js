@@ -1,7 +1,3 @@
-// Validação e normalização de URLs da Amazon Brasil.
-// Só aceitamos hosts da amazon.com.br para que o Puppeteer nunca navegue
-// para endereços arbitrários (ex.: rede interna / metadados da cloud).
-
 const ALLOWED_HOSTS = new Set([
     "amazon.com.br",
     "www.amazon.com.br",

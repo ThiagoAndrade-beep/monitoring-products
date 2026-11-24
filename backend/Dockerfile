@@ -1,10 +1,6 @@
 FROM node:22-bookworm-slim
 
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-
-RUN apt-get update && apt-get install -y --no-install-recommends chromium \
-    && rm -rf /var/lib/apt/lists/*
+# O scraper (Puppeteer/Chromium) roda fora do deploy, no worker local em scraper/.
 
 WORKDIR /app
 COPY package*.json ./
