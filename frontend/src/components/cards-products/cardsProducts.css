@@ -66,6 +66,11 @@
     font-weight: bold;
 }
 
+.product-status {
+    color: #b5b5b5;
+    font-size: 13px;
+}
+
 .products-date {
     display: flex;
     align-items: center;

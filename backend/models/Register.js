@@ -21,13 +21,28 @@ const User = mongoose.model('User', {
                 type: String,
                 required: true
             },
-            name: {
+            asin: {
                 type: String,
-                required: true,
+                index: true
+            },
+            // name e lastPrice ficam vazios enquanto o produto aguarda a primeira verificação do worker
+            name: {
+                type: String
             },
             lastPrice: {
-                type: Number,
-                required: true,
+                type: Number
+            },
+            // pending: aguardando a primeira verificação | ok | unavailable: sem preço na página | error
+            status: {
+                type: String,
+                enum: ['pending', 'ok', 'unavailable', 'error'],
+                default: 'ok'
+            },
+            lastCheckedAt: {
+                type: Date
+            },
+            lastError: {
+                type: String
             },
             history: [
                 {
